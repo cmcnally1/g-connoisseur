@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //Function is called when the Google Map is ready and initialised
     override fun onMapReady(googleMap: GoogleMap) {
+        
 
         //The map just created is set to the map variable for the class
         map = googleMap
