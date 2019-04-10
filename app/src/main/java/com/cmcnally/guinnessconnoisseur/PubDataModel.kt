@@ -1,6 +1,6 @@
 package com.cmcnally.guinnessconnoisseur
 
-data class Pub(
+data class Pubs(
     val html_attributions: List<html_attributions>?,
     val next_page_token: String?,
     val results: List<results>?,
