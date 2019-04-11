@@ -11,11 +11,16 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import org.koin.android.ext.android.inject
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View{
+
+    private val presenter: MainPresenter by inject()
 
     //Declaration of Google Map variable
     private lateinit var map: GoogleMap
+
+    private var currentPubs: Pubs? = null
 
     //Google maps api key
     //private val apiKey = getString(R.string.google_maps_key)
@@ -26,6 +31,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //Attach the current view to the presenter
+        presenter.attachView(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -63,10 +71,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             if(location != null){
                 //Create a latLng object for the current latitude and longitude
                 val currentLatLng = LatLng(location.latitude, location.longitude)
-                //Clear the map of all markers before getting the current location
-                map.clear()
+
+                val userLatitude = currentLatLng.latitude.toString()
+                val userLongitude = currentLatLng.longitude.toString()
+
                 //Move camera to show the current user position on the map
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+
+                presenter.getPubs(userLatitude, userLongitude)
 
             }
         }
@@ -78,6 +90,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
 
     }
+
+    override fun returnPubs(pubs: Pubs) {
+        currentPubs = pubs
+        
+    }
+
 
     companion object {
         //Location permission code constant
