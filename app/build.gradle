@@ -38,4 +38,11 @@ dependencies {
     //Koin implementation
     implementation "org.koin:koin-android:1.0.1"
 
+    //OkHTTP and GSON implementation
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //Google Places implementation
+    implementation 'com.google.android.libraries.places:places:1.0.0'
+
 }
