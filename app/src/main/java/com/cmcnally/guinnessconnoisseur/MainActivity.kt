@@ -15,11 +15,13 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View{
 
+    //MainPresenter by injection
     private val presenter: MainPresenter by inject()
 
     //Declaration of Google Map variable
     private lateinit var map: GoogleMap
 
+    //Variable to hold the current Pubs
     private var currentPubs: Pubs? = null
 
     //Google maps api key
@@ -72,12 +74,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
                 //Create a latLng object for the current latitude and longitude
                 val currentLatLng = LatLng(location.latitude, location.longitude)
 
+                //User's latitude
                 val userLatitude = currentLatLng.latitude.toString()
+                //User's longitude
                 val userLongitude = currentLatLng.longitude.toString()
 
                 //Move camera to show the current user position on the map
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
 
+                //Tell the presenter to get the pubs for the user's current location
                 presenter.getPubs(userLatitude, userLongitude)
 
             }
@@ -91,7 +96,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
     }
 
+    //Overridden function from the MainPresenter to return the pubs found
     override fun returnPubs(pubs: Pubs) {
+        //Set the current pubs to be the pubs returned from the API
         currentPubs = pubs
         
     }
