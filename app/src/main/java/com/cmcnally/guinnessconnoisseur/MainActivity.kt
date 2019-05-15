@@ -2,18 +2,19 @@ package com.cmcnally.guinnessconnoisseur
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import com.cmcnally.guinnessconnoisseur.R.color.colorPrimary
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View, GoogleMap.OnInfoWindowClickListener{
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
                 val userLongitude = currentLatLng.longitude.toString()
 
                 //Move camera to show the current user position on the map
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14f))
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
 
                 //Tell the presenter to get the pubs for the user's current location
                 presenter.getPubs(userLatitude, userLongitude)
@@ -118,11 +119,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
                 //Marker title and information snippet that displays on click of the marker
                 val titleStr = pubs.results[i].name
-//                val snippetStr = "tap for more info"
+                val snippetStr = "tap for more info"
 
                 //add marker title and snippet to show info about the charge point
                 markerOptions.title(titleStr)
-//                    .snippet(snippetStr)
+                    .snippet(snippetStr)
 
                 //Marker object that displays on the map
                 val locationMarker = map.addMarker(markerOptions)

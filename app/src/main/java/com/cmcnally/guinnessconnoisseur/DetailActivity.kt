@@ -2,6 +2,7 @@ package com.cmcnally.guinnessconnoisseur
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -14,9 +15,16 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.detail_activity.*
+import android.graphics.Color.parseColor
+import android.graphics.Color.colorToHSV
+import com.cmcnally.guinnessconnoisseur.R.color.colorAccent
+import com.cmcnally.guinnessconnoisseur.R.color.colorPrimary
+
 
 class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -66,11 +74,12 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
     //onMapReady and setUpMap set the map up when the activity is started
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        
+
         map.uiSettings.isMyLocationButtonEnabled = false
         map.uiSettings.isZoomControlsEnabled = false
 
-        val markerOptions = MarkerOptions().position(latLng)
+        val markerOptions = MarkerOptions()
+            .position(latLng)
 
         map.addMarker(markerOptions)
 
