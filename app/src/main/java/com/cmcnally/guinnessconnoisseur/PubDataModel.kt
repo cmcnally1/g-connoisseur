@@ -3,7 +3,7 @@ package com.cmcnally.guinnessconnoisseur
 data class Pubs(
     val html_attributions: List<html_attributions>?,
     val next_page_token: String?,
-    val results: List<results>?,
+    val results: List<result>?,
     val status: String?
 )
 
@@ -11,7 +11,7 @@ data class html_attributions(
     val html_attributions: String? //may cause issues as don't know the structure of this
 )
 
-data class results(
+data class result(
     val geometry: geometry?,
     val icon: String?,
     val name: String?,
@@ -83,4 +83,22 @@ data class photos(
 data class plus_code(
     val compound_code: String?,
     val global_code: String?
+)
+
+
+
+data class Pub(
+    val geometry: geometry?,
+    val icon: String?,
+    val name: String?,
+    val opening_hours: opening_hours?,
+    val photos: List<photos>?,
+    val place_id: String?,
+    val plus_code: plus_code?,
+    val rating: Float?,
+    val reference: String?,
+    val scope: String?,
+    val types: List<String>?,
+    val user_ratings_total: Int?,
+    val vicinity: String?
 )

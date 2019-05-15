@@ -1,20 +1,23 @@
 package com.cmcnally.guinnessconnoisseur
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import com.cmcnally.guinnessconnoisseur.R.color.colorPrimary
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
+import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View{
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View, GoogleMap.OnInfoWindowClickListener{
 
     //MainPresenter by injection
     private val presenter: MainPresenter by inject()
@@ -81,7 +84,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
                 val userLongitude = currentLatLng.longitude.toString()
 
                 //Move camera to show the current user position on the map
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
 
                 //Tell the presenter to get the pubs for the user's current location
                 presenter.getPubs(userLatitude, userLongitude)
@@ -94,6 +97,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
         //Set map type to be normal
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
+
+        //Add on info window click listener to listen for selected pub
+        map.setOnInfoWindowClickListener(this)
 
     }
 
@@ -113,16 +119,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
                 //Marker title and information snippet that displays on click of the marker
                 val titleStr = pubs.results[i].name
-//                val snippetStr = "tap for more info"
+                val snippetStr = "tap for more info"
 
                 //add marker title and snippet to show info about the charge point
                 markerOptions.title(titleStr)
-//                    .snippet(snippetStr)
+                    .snippet(snippetStr)
 
                 //Marker object that displays on the map
                 val locationMarker = map.addMarker(markerOptions)
 
-                //associate the charge point data with the marker
+                //associate the pub data with the marker for when the marker is selected
                 locationMarker.tag = pubs.results[i]
             }
         }
@@ -143,9 +149,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
         
     }
 
+    override fun onInfoWindowClick(marker: Marker?) {
+
+        //retrieve pub data from the selected marker
+        val pub = marker?.tag as result
+
+        //create an intent object to hold the intent to start the detail activity
+        val intent = Intent(this, DetailActivity::class.java)
+
+        //add the data to use in the detail activity
+        intent.putExtra(PUB_NAME_KEY, pub.name)
+        intent.putExtra(PUB_LATITUDE_KEY, pub.geometry?.location?.lat.toString())
+        intent.putExtra(PUB_LONGITUDE_KEY, pub.geometry?.location?.lng.toString())
+
+        //start the detail activity
+        startActivity(intent)
+    }
 
     companion object {
         //Location permission code constant
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+
+        //keys for starting the detail activity
+        const val PUB_NAME_KEY = "PUB NAME"
+        const val PUB_LATITUDE_KEY = "PUB_LATITUDE"
+        const val PUB_LONGITUDE_KEY = "PUB_LONGITUDE"
     }
 }
