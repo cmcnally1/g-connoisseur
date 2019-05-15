@@ -11,6 +11,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View{
@@ -96,10 +97,49 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
     }
 
+    private fun displayPubsOnMap(pubs: Pubs){
+
+        //Loop through the charge points
+        for (i in 0 until pubs.results!!.size) {
+            //Check that the charge point location is not null
+            if (pubs.results[i].geometry?.location?.lat != null && pubs.results[i].geometry?.location?.lng != null) {
+                //Create a LatLng object for the charge point
+                val location = LatLng(
+                    pubs.results[i].geometry?.location?.lat!!.toDouble(),
+                    pubs.results[i].geometry?.location?.lng!!.toDouble()
+                )
+                //Create a marker options object that will hold maker preferences like colour and title
+                val markerOptions = MarkerOptions().position(location)
+
+                //Marker title and information snippet that displays on click of the marker
+                val titleStr = pubs.results[i].name
+//                val snippetStr = "tap for more info"
+
+                //add marker title and snippet to show info about the charge point
+                markerOptions.title(titleStr)
+//                    .snippet(snippetStr)
+
+                //Marker object that displays on the map
+                val locationMarker = map.addMarker(markerOptions)
+
+                //associate the charge point data with the marker
+                locationMarker.tag = pubs.results[i]
+            }
+        }
+
+    }
+
     //Overridden function from the MainPresenter to return the pubs found
     override fun returnPubs(pubs: Pubs) {
         //Set the current pubs to be the pubs returned from the API
         currentPubs = pubs
+
+        runOnUiThread {
+            //Clear any current pins from the map
+            map.clear()
+            //Display pubs on the map
+            displayPubsOnMap(currentPubs!!)
+        }
         
     }
 
