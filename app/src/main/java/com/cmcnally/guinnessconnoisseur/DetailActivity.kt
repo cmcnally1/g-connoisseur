@@ -1,17 +1,30 @@
 package com.cmcnally.guinnessconnoisseur
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
+import com.cmcnally.guinnessconnoisseur.MainActivity.Companion.PUB_LATITUDE_KEY
+import com.cmcnally.guinnessconnoisseur.MainActivity.Companion.PUB_LONGITUDE_KEY
 import com.cmcnally.guinnessconnoisseur.MainActivity.Companion.PUB_NAME_KEY
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.detail_activity.*
 
 class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    //Google Map object
+    private lateinit var map: GoogleMap
+
+    //Object that holds a latitude and longitude
+    private lateinit var latLng: LatLng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +34,11 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //Name of Pub selected
         val pubName = intent.getStringExtra(PUB_NAME_KEY)
+        val latitude = intent.getStringExtra(PUB_LATITUDE_KEY)
+        val longitude = intent.getStringExtra(PUB_LONGITUDE_KEY)
+
+        //Create a LatLng object from the received latitude and longitude
+        latLng = LatLng(latitude.toDouble(), longitude.toDouble())
 
         //Pub name TextView
         val pubNameTextView = findViewById<TextView>(R.id.nameText)
@@ -32,11 +50,32 @@ class DetailActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        
+
+        //Creation of an Intent object that will pass the pubs latitude and longitude
+        //out to the google maps application to allow turn-by-turn navigation to the pub
+        var gmIntentUri: Uri = Uri.parse("google.navigation:q=$latitude,$longitude")
+        var mapIntent = Intent(Intent.ACTION_VIEW, gmIntentUri)
+        mapIntent.setPackage("com.google.android.apps.maps")
+
+        //Implementation of the button that will activate the turn-by-turn navigation through google maps
+        goThereButton.setOnClickListener {
+            startActivity(mapIntent)
+        }
     }
 
-    override fun onMapReady(p0: GoogleMap?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    //onMapReady and setUpMap set the map up when the activity is started
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        
+        map.uiSettings.isMyLocationButtonEnabled = false
+        map.uiSettings.isZoomControlsEnabled = false
+
+        val markerOptions = MarkerOptions().position(latLng)
+
+        map.addMarker(markerOptions)
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16f))
     }
+
 
 }

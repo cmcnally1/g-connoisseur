@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
                 val userLongitude = currentLatLng.longitude.toString()
 
                 //Move camera to show the current user position on the map
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14f))
 
                 //Tell the presenter to get the pubs for the user's current location
                 presenter.getPubs(userLatitude, userLongitude)
@@ -158,6 +158,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
         //add the data to use in the detail activity
         intent.putExtra(PUB_NAME_KEY, pub.name)
+        intent.putExtra(PUB_LATITUDE_KEY, pub.geometry?.location?.lat.toString())
+        intent.putExtra(PUB_LONGITUDE_KEY, pub.geometry?.location?.lng.toString())
 
         //start the detail activity
         startActivity(intent)
@@ -169,5 +171,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, MainPresenter.View
 
         //keys for starting the detail activity
         const val PUB_NAME_KEY = "PUB NAME"
+        const val PUB_LATITUDE_KEY = "PUB_LATITUDE"
+        const val PUB_LONGITUDE_KEY = "PUB_LONGITUDE"
     }
 }
