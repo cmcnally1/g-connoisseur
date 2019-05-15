@@ -1,5 +1,8 @@
 package com.cmcnally.guinnessconnoisseur
 
+/*
+    The Main Presenter handles requests and updates from the Main Activity and the Pub Repository
+ */
 
 class MainPresenter(private val pubRepo: PubRepo): PubRepo.RepoListener {
 
@@ -19,6 +22,7 @@ class MainPresenter(private val pubRepo: PubRepo): PubRepo.RepoListener {
         this.view = null
     }
 
+    //Function to ask the repository to find pubs around the specified location
     fun getPubs(latitude: String, longitude: String){
 
         pubRepo.getPubs(latitude, longitude)
